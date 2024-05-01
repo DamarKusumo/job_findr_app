@@ -1,30 +1,39 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+const puppeteer = require('puppeteer');
 
 export async function helloSelenium() {
-    const url = 'https://books.toscrape.com/';
+    const url = 'https://karir.com/search-lowongan?keyword=Front%20End%20Developer';
     let result = {};
 
     try {
-        // Fetch the HTML content of the page
-        const response = await axios.get(url);
-        const html = response.data;
+        // Launch a headless browser
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        
+        // Navigate to the URL
+        await page.goto(url);
+        
+        // Wait for the '.side_categories' element to ensure the page is fully loaded
+        await page.waitForSelector('.container');
 
-        // Load the HTML content into Cheerio
-        const $ = cheerio.load(html);
-
-        // Find all elements with class 'side_categories'
-        $('.side_categories ul li a').each((index, element) => {
-            let text = $(element).text().trim();
-            let urlpath = $(element).attr('href').trim().replace('../', '');
-            
-            // Skip 'Books' and 'Erotica'
-            if (text === "Books" || text === "Erotica") {
-                return;
-            }
-
-            result[text] = urlpath;
+        // Extract data using Puppeteer's evaluate function
+        result = await page.evaluate(() => {
+            let data = {};
+            // Find all elements with class 'side_categories'
+            document.querySelectorAll('.container').forEach((element) => {
+                let text = element.textContent.trim();
+                // let urlpath = element.getAttribute('href').trim().replace('../', '');
+                // // Skip 'Books' and 'Erotica'
+                // if (text !== "Books" && text !== "Erotica") {
+                //     data[text] = urlpath;
+                // }
+                data[text] = text;
+            });
+            return data;
         });
+        
+        // Close the browser
+        await browser.close();
+        
     } catch (error) {
         console.error('Error in scraping:', error);
         return false;
