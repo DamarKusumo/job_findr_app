@@ -1,47 +1,34 @@
-const { Builder, Browser, By } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 export async function helloSelenium() {
     const url = 'https://books.toscrape.com/';
     let result = {};
-    let driver;
 
     try {
-        driver = await new Builder()
-            .forBrowser('chrome')
-            .setChromeOptions(new chrome.Options().addArguments("--headless"))
-            .build();
+        // Fetch the HTML content of the page
+        const response = await axios.get(url);
+        const html = response.data;
 
-        if (!driver) {
-            throw new Error('Failed to create driver');
-        }
+        // Load the HTML content into Cheerio
+        const $ = cheerio.load(html);
 
-        await driver.get(url);
-        let categories = await driver.findElements(By.className('side_categories'));
-
-        for (let category of categories) {
-            let links = await category.findElements(By.css('ul li a'));
-            for (let link of links) {
-                let text = await link.getText();
-                if (text === "Books" || text === "Erotica") {
-                    continue;
-                }
-                let urlpath = await link.getAttribute("href");
-                if (!urlpath) {
-                    throw new Error(`Failed to get href attribute for link: ${text}`);
-                }
-                urlpath = urlpath.trim().replace("../", "");
-                result[text] = urlpath;
+        // Find all elements with class 'side_categories'
+        $('.side_categories ul li a').each((index, element) => {
+            let text = $(element).text().trim();
+            let urlpath = $(element).attr('href').trim().replace('../', '');
+            
+            // Skip 'Books' and 'Erotica'
+            if (text === "Books" || text === "Erotica") {
+                return;
             }
-        }
+
+            result[text] = urlpath;
+        });
     } catch (error) {
-        console.error('Error in helloSelenium:', error);
+        console.error('Error in scraping:', error);
         return false;
-    } finally {
-        if (driver) { 
-            await driver.quit();
-        }
     }
 
     return result;
-};
+}
