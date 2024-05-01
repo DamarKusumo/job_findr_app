@@ -13,7 +13,8 @@
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "selenium": "^2.20.0"
+    "selenium": "^2.20.0",
+    "selenium-webdriver": "^4.20.0"
   },
   "devDependencies": {
     "@types/node": "^20",
