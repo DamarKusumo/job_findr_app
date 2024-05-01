@@ -1,4 +1,5 @@
 const { Builder, Browser, By } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 
 export async function helloSelenium() {
     const url = 'https://books.toscrape.com/';
@@ -7,7 +8,8 @@ export async function helloSelenium() {
 
     try {
         driver = await new Builder()
-            .forBrowser(Browser.CHROME)
+            .forBrowser('chrome')
+            .setChromeOptions(new chrome.Options().addArguments("--headless"))
             .build();
 
         if (!driver) {
