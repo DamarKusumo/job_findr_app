@@ -44,13 +44,11 @@ export const read = async (collection, id) => {
     const doc = await docRef.get();
     if (doc.exists) {
         const data = doc.data();
-        console.log(data.title);
         return data;
     } else {
         return null;
     }
 }
-
 export const readAll = async (collection) => {
     const querySnapshot = await db.collection(collection).get();
     const docs = [];
