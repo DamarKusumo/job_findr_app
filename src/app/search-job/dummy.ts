@@ -1,6 +1,4 @@
-import { JobResponse } from "./type";
-
-export const dummyRes: JobResponse = {
+export const dummyRes = {
   status: 200,
   data: [
     {

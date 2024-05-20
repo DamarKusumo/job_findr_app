@@ -3,12 +3,11 @@
 import React, { useEffect, useState } from "react";
 import LoadingSpinner from "@/components/layout/LoadingSpinner";
 import CustomLayout from "@/components/layout/CustomLayout";
-import { DataObject, JobResponse } from "./type";
+import { DataObject } from "./type";
 import JobCard from "@/components/card/JobCard";
 import {
   Button,
   DatePicker,
-  DatePickerProps,
   Form,
   Input,
   Pagination,
@@ -16,14 +15,16 @@ import {
   Select,
 } from "antd";
 import { useRouter } from "next/navigation";
-import { dummyRes } from "./dummy";
 import {
   BankOutlined,
   EnvironmentOutlined,
   FilterOutlined,
 } from "@ant-design/icons";
+import { getJobData } from "@/services/job";
+import dayjs from "dayjs";
 
 const PAGE_ROUTE_SEARCH_JOB = "/search-job";
+const dateFormat = "YYYY-MM-DD";
 
 const SearchJobPage = ({
   searchParams,
@@ -40,37 +41,9 @@ const SearchJobPage = ({
   const router = useRouter();
 
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [jobRes, setJobRes] = useState<JobResponse>();
+  const [jobRes, setJobRes] = useState<any>();
   const [errorStatus, setErrorStatus] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsFetching(true);
-    setJobRes(dummyRes);
-    setIsFetching(false);
-  }, [position, pubDate, location, company, currentPage]);
-
-  if (isFetching) {
-    return <LoadingSpinner />;
-  }
-
-  const dateFormat = "DD/MM/YYYY";
-  const customFormat: DatePickerProps["format"] = (value) =>
-    value.format(dateFormat);
-
-  const onFinish = (values: any) => {
-    // setIsLoading(true);
-    const params = getParams(
-      values.position,
-      values.location,
-      values.company,
-      values.pubDate?.format("YYYY/MM/DD")
-    );
-    router.push(`${PAGE_ROUTE_SEARCH_JOB}?${params}`);
-  };
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.error("Failed: ", errorInfo);
-  };
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const getParams = (
     position: any,
@@ -79,11 +52,49 @@ const SearchJobPage = ({
     pubDate: any,
     page?: number
   ) => {
-    return `${position ? `position=${position}` : ""}${
-      location ? `&location=${location}` : ""
-    }${company ? `&company=${company}` : ""}${
-      pubDate ? `&pubDate=${pubDate}` : ""
-    }${page ? `&page=${page}` : ""}`;
+    return `${position ? `position=${position}&` : ""}${
+      location ? `location=${location}&` : ""
+    }${company ? `company=${company}&` : ""}${
+      pubDate ? `pubDate=${pubDate}&` : ""
+    }${page ? `page=${page}&` : ""}`;
+  };
+
+  useEffect(() => {
+    let params = getParams(position, location, company, pubDate, currentPage);
+    fetchData(`${params}size=${pageSize}`);
+  }, [position, pubDate, location, company, currentPage]);
+
+  const fetchData = async (params: string) => {
+    setIsFetching(true);
+    try {
+      const response = await getJobData(params);
+      if (response.status === 200) {
+        setJobRes(response);
+      }
+    } catch (error: any) {
+      setErrorStatus(true);
+      setErrorMessage(error.message.toString());
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  if (isFetching) {
+    return <LoadingSpinner />;
+  }
+
+  const onFinish = (values: any) => {
+    const params = getParams(
+      values.position,
+      values.location,
+      values.company,
+      values.pubDate?.format(dateFormat)
+    );
+    router.push(`${PAGE_ROUTE_SEARCH_JOB}?${params}`);
+  };
+
+  const onFinishFailed = (errorInfo: any) => {
+    console.error("Failed: ", errorInfo);
   };
 
   return (
@@ -92,9 +103,13 @@ const SearchJobPage = ({
         <Form
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-          // disabled={isLoading}
           className="w-auto pt-5 md:w-full flex md:grid md:grid-cols-9 gap-3"
-          initialValues={{ ["position"]: "" }}
+          initialValues={{
+            position: position ? position : "",
+            location: location,
+            company: company,
+            pubDate: pubDate ? dayjs(`${pubDate}`, dateFormat) : null,
+          }}
         >
           <Form.Item
             name="position"
@@ -141,7 +156,6 @@ const SearchJobPage = ({
               placeholder="Published after"
               allowClear
               className="w-full"
-              format={customFormat}
             />
           </Form.Item>
           <Form.Item>
@@ -149,15 +163,20 @@ const SearchJobPage = ({
               type="primary"
               htmlType="submit"
               className="w-fit md:w-full"
-              // loading={isLoading}
-              // disabled={isLoading}
             >
-              Search
+              Filter
             </Button>
           </Form.Item>
         </Form>
       </div>
       <div className="mt-[56px] p-5 sm:p-10 flex justify-center">
+        {errorStatus && (
+          <Result
+            status="500"
+            title="Sorry, something went wrong"
+            subTitle={errorMessage}
+          />
+        )}
         {!errorStatus && (
           <div className="flex flex-col gap-10 items-center">
             {jobRes?.data.length ? (

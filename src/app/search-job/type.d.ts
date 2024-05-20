@@ -8,11 +8,3 @@ export interface DataObject {
   logoImgLink: string;
   position: string;
 }
-
-export interface JobResponse {
-  status: number;
-  data: DataObject[];
-  currentPage: number;
-  totalPages: number;
-  totalData: number;
-}
