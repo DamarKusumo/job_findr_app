@@ -8,6 +8,7 @@ import JobCard from "@/components/card/JobCard";
 import {
   Button,
   DatePicker,
+  DatePickerProps,
   Form,
   Input,
   Pagination,
@@ -23,8 +24,8 @@ import {
 import { getJobData } from "@/services/job";
 import dayjs from "dayjs";
 
-const PAGE_ROUTE_SEARCH_JOB = "/search-job";
-const dateFormat = "YYYY-MM-DD";
+export const PAGE_ROUTE_SEARCH_JOB = "/search-job";
+const dateFormat = "YYYY/MM/DD";
 
 const SearchJobPage = ({
   searchParams,
@@ -69,7 +70,7 @@ const SearchJobPage = ({
     try {
       const response = await getJobData(params);
       if (response.status === 200) {
-        setJobRes(response);
+        setJobRes(response.data);
       }
     } catch (error: any) {
       setErrorStatus(true);
@@ -96,6 +97,9 @@ const SearchJobPage = ({
   const onFinishFailed = (errorInfo: any) => {
     console.error("Failed: ", errorInfo);
   };
+
+  const customFormat: DatePickerProps["format"] = (value) =>
+    value.format(dateFormat);
 
   return (
     <CustomLayout>
@@ -156,6 +160,7 @@ const SearchJobPage = ({
               placeholder="Published after"
               allowClear
               className="w-full"
+              format={customFormat}
             />
           </Form.Item>
           <Form.Item>
@@ -178,7 +183,7 @@ const SearchJobPage = ({
           />
         )}
         {!errorStatus && (
-          <div className="flex flex-col gap-10 items-center">
+          <div className="flex flex-col gap-10 items-center w-full">
             {jobRes?.data.length ? (
               <div className="w-full grid md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {jobRes.data.map((job: DataObject, index: number) => (
