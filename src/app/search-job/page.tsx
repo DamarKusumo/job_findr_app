@@ -174,7 +174,7 @@ const SearchJobPage = ({
           </Form.Item>
         </Form>
       </div>
-      <div className="mt-[56px] p-5 sm:p-10 flex justify-center">
+      <div className="mt-[56px] p-5 pt-10 sm:p-10 flex justify-center">
         {errorStatus && (
           <Result
             status="500"

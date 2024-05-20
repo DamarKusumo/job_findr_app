@@ -13,8 +13,8 @@ const RootLayout = ({ children }) => {
 };
 
 export const metadata = {
-  title: "JobFindr",
-  description: "Find your future job",
+  title: "JobFindr | Find Your Future Job",
+  description: "Find Your Future Job",
 };
 
 export default RootLayout;

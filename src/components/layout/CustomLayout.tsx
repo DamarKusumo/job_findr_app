@@ -10,12 +10,12 @@ const CustomLayout = ({ children }: any) => {
   return (
     <ConfigProvider theme={theme}>
       <Layout className="min-h-screen">
-        <Header className="sticky top-0 z-50 w-full flex items-center">
+        <Header className="fixed top-0 z-50 w-full flex items-center">
           <a href="/search-job">
             <div className="text-white font-bold text-xl">JobFindr</div>
           </a>
         </Header>
-        <Content>{children}</Content>
+        <Content className="mt-16">{children}</Content>
       </Layout>
     </ConfigProvider>
   );
