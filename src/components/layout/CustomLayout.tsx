@@ -11,7 +11,9 @@ const CustomLayout = ({ children }: any) => {
     <ConfigProvider theme={theme}>
       <Layout className="min-h-screen">
         <Header className="sticky top-0 z-50 w-full flex items-center">
-          <div className="text-white font-bold text-xl">JobFindr</div>
+          <a href="/search-job">
+            <div className="text-white font-bold text-xl">JobFindr</div>
+          </a>
         </Header>
         <Content>{children}</Content>
       </Layout>

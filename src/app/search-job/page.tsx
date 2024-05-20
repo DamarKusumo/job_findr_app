@@ -3,19 +3,37 @@
 import React, { useEffect, useState } from "react";
 import LoadingSpinner from "@/components/layout/LoadingSpinner";
 import CustomLayout from "@/components/layout/CustomLayout";
-import { DataObject } from "./type";
+import { DataObject, JobResponse } from "./type";
 import JobCard from "@/components/card/JobCard";
 import { Pagination, Result } from "antd";
-import { dummy } from "./dummy";
+import { useRouter, useSearchParams } from "next/navigation";
+import { dummyRes } from "./dummy";
 
-const SearchJobPage = () => {
+const PAGE_ROUTE_SEARCH_JOB = "/search-job";
+
+const SearchJobPage = ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+  const position = searchParams["position"];
+  const location = searchParams["location"];
+  const company = searchParams["company"];
+  const pubDate = searchParams["pubDate"];
+  const currentPage = Number(searchParams["page"]);
+  const pageSize = 60;
+
+  const router = useRouter();
+
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [jobData, setJobData] = useState<DataObject[]>(dummy);
+  const [jobRes, setJobRes] = useState<JobResponse>();
   const [errorStatus, setErrorStatus] = useState<boolean>(false);
 
   useEffect(() => {
+    setIsFetching(true);
+    setJobRes(dummyRes);
     setIsFetching(false);
-  }, []);
+  }, [position, pubDate, location, company, currentPage]);
 
   if (isFetching) {
     return <LoadingSpinner />;
@@ -29,27 +47,33 @@ const SearchJobPage = () => {
       <div className="mt-[56px] p-5 sm:p-10 flex justify-center">
         {!errorStatus && (
           <div className="flex flex-col gap-10 items-center">
-            {jobData.length ? (
+            {jobRes?.data.length ? (
               <div className="w-full grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {jobData.map((job: DataObject, index: number) => (
+                {jobRes.data.map((job: DataObject, index: number) => (
                   <JobCard key={index} data={job} />
                 ))}
               </div>
             ) : (
-              <Result
-                status="404"
-                title="No matching jobs found."
-                subTitle="Try rephrasing your search."
-              />
+              <Result status="404" title="No jobs found" />
             )}
 
-            {/* {jobData.length ? (
+            {jobRes?.data.length ? (
               <Pagination
                 defaultCurrent={1}
-                total={jobData.length}
-                pageSize={15}
+                current={currentPage ? currentPage : 1}
+                total={jobRes.totalData}
+                pageSize={pageSize}
+                showSizeChanger={false}
+                onChange={(page: number) => {
+                  let params = `${position ? `position=${position}&` : ""}${
+                    location ? `location=${location}&` : ""
+                  }${company ? `company=${company}&` : ""}${
+                    pubDate ? `pubDate=${pubDate}&` : ""
+                  }`;
+                  router.push(`${PAGE_ROUTE_SEARCH_JOB}?${params}page=${page}`);
+                }}
               />
-            ) : null} */}
+            ) : null}
           </div>
         )}
       </div>

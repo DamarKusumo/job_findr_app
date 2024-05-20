@@ -7,7 +7,7 @@ import {
   EnvironmentOutlined,
   LinkOutlined,
 } from "@ant-design/icons";
-import { Avatar, Card, Row } from "antd";
+import { Avatar, Card, Col, Row } from "antd";
 
 interface JobCardProps {
   data: DataObject;
@@ -18,31 +18,43 @@ const JobCard = ({ data }: JobCardProps) => {
     <Card
       className="w-full"
       actions={[
-        <a href={data.link} target="_blank">
+        <a href={data.linkDetail} target="_blank">
           View Post
         </a>,
       ]}
     >
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
         <div className="w-[64px]">
-          <Avatar shape="square" size={64} src={data.imageUrl} />
+          <Avatar shape="square" size={64} src={data.logoImgLink} />
         </div>
         <div className="w-full flex flex-col">
           <span className="font-semibold text-lg line-clamp-2">
             {data.title}
           </span>
           <span className="font-medium line-clamp-2">{data.company}</span>
-          <Row className="mt-3 gap-2">
-            <EnvironmentOutlined className="opacity-50" />
-            <span>{data.location}</span>
+          <Row className="mt-3 ">
+            <Col flex="1" className="h-auto">
+              <EnvironmentOutlined className="opacity-50" />
+            </Col>
+            <Col flex="9" className="h-auto">
+              <span className="break-words">{data.location}</span>
+            </Col>
           </Row>
-          <Row className="gap-2">
-            <LinkOutlined className="opacity-50" />
-            <span>{data.sourceSite}</span>
+          <Row>
+            <Col flex="1">
+              <LinkOutlined className="opacity-50" />
+            </Col>
+            <Col flex="9">
+              <span>{data.sourceSite}</span>
+            </Col>
           </Row>
-          <Row className="gap-2">
-            <CalendarOutlined className="opacity-50" />
-            <span>Published {data.publicationDate}</span>
+          <Row>
+            <Col flex="1">
+              <CalendarOutlined className="opacity-50" />
+            </Col>
+            <Col flex="9">
+              <span>Published {data.publicationDate}</span>
+            </Col>
           </Row>
         </div>
       </div>
