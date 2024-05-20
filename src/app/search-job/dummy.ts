@@ -1,9 +1,9 @@
 import { JobResponse } from "./type";
 
 export const dummyRes: JobResponse = {
+  status: 200,
   data: [
     {
-      id: "linkedin:3858589413",
       title: "Frontend Developer",
       publicationDate: "18/03/2024",
       location: "Central Jakarta, Jakarta, Indonesia",
@@ -16,7 +16,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3865055286",
       title: "React Js Developer",
       publicationDate: "23/03/2024",
       location: "Jakarta, Jakarta, Indonesia",
@@ -29,7 +28,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3907413219",
       title: "Technical Developer",
       publicationDate: "26/04/2024",
       location: "Jakarta Metropolitan Area",
@@ -42,7 +40,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3925253052",
       title: "Lowongan Junior Java Programmer",
       publicationDate: "14/05/2024",
       location: "Jakarta, Jakarta, Indonesia",
@@ -55,7 +52,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3899308777",
       title: "Assistant Front end Developer",
       publicationDate: "15/04/2024",
       location: "Indonesia",
@@ -68,7 +64,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3905494325",
       title: "Frontend Developer",
       publicationDate: "20/04/2024",
       location: "Jakarta, Jakarta, Indonesia",
@@ -81,7 +76,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3903426921",
       title: "Software Engineer – Internship",
       publicationDate: "18/04/2024",
       location: "Kota Tangerang Selatan, Banten, Indonesia",
@@ -94,7 +88,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3922195538",
       title: "IT: Frontend Developer",
       publicationDate: "09/05/2024",
       location: "South Tangerang City, Banten, Indonesia",
@@ -107,7 +100,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3907420871",
       title: "Frontend Developer",
       publicationDate: "26/04/2024",
       location: "East Jakarta, Jakarta, Indonesia",
@@ -120,7 +112,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3915547622",
       title: "Front End Developer",
       publicationDate: "01/05/2024",
       location: "Jakarta, Jakarta, Indonesia",
@@ -133,7 +124,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3909117605",
       title: "Software Engineer - Web",
       publicationDate: "29/04/2024",
       location: "Jakarta Metropolitan Area",
@@ -146,7 +136,6 @@ export const dummyRes: JobResponse = {
       position: "Programmer",
     },
     {
-      id: "linkedin:3881064899",
       title: "Software Engineer",
       publicationDate: "03/05/2024",
       location: "Tangerang, Banten, Indonesia",

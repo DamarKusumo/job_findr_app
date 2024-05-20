@@ -41,19 +41,21 @@ const JobCard = ({ data }: JobCardProps) => {
             </Col>
           </Row>
           <Row>
-            <Col flex="1">
+            <Col flex="1" className="h-auto">
               <LinkOutlined className="opacity-50" />
             </Col>
-            <Col flex="9">
-              <span>{data.sourceSite}</span>
+            <Col flex="9" className="h-auto">
+              <span className="break-words">{data.sourceSite}</span>
             </Col>
           </Row>
           <Row>
-            <Col flex="1">
+            <Col flex="1" className="h-auto">
               <CalendarOutlined className="opacity-50" />
             </Col>
-            <Col flex="9">
-              <span>Published {data.publicationDate}</span>
+            <Col flex="9" className="h-auto">
+              <span className="break-words">
+                Published {data.publicationDate}
+              </span>
             </Col>
           </Row>
         </div>

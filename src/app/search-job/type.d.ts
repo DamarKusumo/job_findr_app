@@ -1,5 +1,4 @@
 export interface DataObject {
-  id: string;
   title: string;
   publicationDate: string;
   location: string;
@@ -11,6 +10,7 @@ export interface DataObject {
 }
 
 export interface JobResponse {
+  status: number;
   data: DataObject[];
   currentPage: number;
   totalPages: number;
