@@ -53,7 +53,7 @@ const SearchJobPage = ({
     pubDate: any,
     page?: number
   ) => {
-    return `${position ? `position=${position}&` : ""}${
+    return `${position && position.length ? `position=${position}&` : ""}${
       location ? `location=${location}&` : ""
     }${company ? `company=${company}&` : ""}${
       pubDate ? `pubDate=${pubDate}&` : ""
@@ -109,7 +109,7 @@ const SearchJobPage = ({
           onFinishFailed={onFinishFailed}
           className="w-auto pt-5 md:w-full flex md:grid md:grid-cols-9 gap-3"
           initialValues={{
-            position: position ? position : "",
+            position: position ? (position as string).split(",") : null,
             location: location,
             company: company,
             pubDate: pubDate ? dayjs(`${pubDate}`, dateFormat) : null,
@@ -121,8 +121,10 @@ const SearchJobPage = ({
           >
             <Select
               suffixIcon={<FilterOutlined />}
+              mode="multiple"
+              allowClear
+              placeholder="Job types"
               options={[
-                { value: "", label: "All Jobs" },
                 { value: "Programmer", label: "Programmer" },
                 { value: "Data", label: "Data" },
                 { value: "Network", label: "Network" },
