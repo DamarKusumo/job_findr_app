@@ -1,5 +1,6 @@
 import { initializeApp, cert, getApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import { collection } from 'firebase/firestore';
 
 const serviceAccount = {
     "type": "service_account",
@@ -56,6 +57,37 @@ export const readAll = async (collection) => {
         docs.push(doc.data());
     });
     return docs;
+}
+
+export const getRef = async (collection) => {
+    return db.collection(collection);
+}
+
+export const filter = async (collection, position, pubDate, location, company, page, size) => {
+    let query = db.collection(collection);
+    const conditions = [
+        position ? ["position", "==", (position).toLowerCase()] : null,
+        pubDate ? ["publicationDate", ">=", new Date(pubDate)] : null,
+        location ? ["locationIdx", "array-contains", (location).toLowerCase()] : null,
+        company ? ["companyIdx", "array-contains", (company).toLowerCase()] : null,
+    ].filter(Boolean);
+
+    if (conditions.length > 0) {
+        query = query.where(...conditions);
+    }
+    const totalData = (await query.count().get()).data().count;
+    const totalPage = Math.floor(totalData / size);
+    const cursor = (page-1) * size + 1;
+    console.log(cursor);
+    query = query
+        .orderBy(
+            "publicationDate"
+        ).limit(
+            parseInt(size)
+        ).startAfter(cursor);
+    const snapshot = await query.get();
+    const docs = snapshot.docs.map(doc => doc.data());
+    return [docs, totalData, totalPage];
 }
 
 export const deleteData = async (collection, id) => {

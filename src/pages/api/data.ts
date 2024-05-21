@@ -1,11 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { save, read, update, readAll, deleteData } from "../../utils/firebaseSetting.js";
+import { save, read, update, readAll, deleteData, getRef, filter } from "../../utils/firebaseSetting.js";
+import { getCombinations } from "../../utils/utils.js"
 
 // 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
+    req: NextApiRequest,
+    res: NextApiResponse,
 ) {
     try {
         if (req.method === "GET") {
@@ -17,33 +18,23 @@ export default async function handler(
                 else
                     res.status(404).json({ status: 404, message: "Data not found" });
             } else {
-                const docs = await readAll("jobs");
-                let data = [];
-                data = docs.filter((doc) =>
-                    (!position || doc.position.toLowerCase() === (position as string)?.toLowerCase()) &&
-                    (!pubDate || new Date(doc.publicationDate).getTime() >= new Date(pubDate as string).getTime()) &&
-                    (!location || doc.location.toLowerCase() === (location as string)?.toLowerCase()) &&
-                    (!company || doc.company.toLowerCase() === (company as string)?.toLowerCase())
-                );
-
-                const lenData = data.length;
-                let totalPages = 1;
-                if (parseInt(size as string) < lenData) totalPages = Math.ceil(lenData / parseInt(size as string));
-                if (parseInt(page as string) > totalPages) return res.status(404).json({ status: 404, message: "Page not found" });
-                const resData = data.slice((parseInt(page as string) - 1) * parseInt(size as string), parseInt(page as string) * parseInt(size as string));
-                res.status(200).json({ status: 200, data: resData, currentPage: parseInt(page as string), totalPages: totalPages, totalData: lenData });
+                const data = await filter("jobs", position, pubDate, location, company, page, size);
+                res.status(200).json({ status: 200, data: data[0], currentPage: parseInt(page as string), totalPages: data[2] , totalData: data[1] });
             }
         } else if (req.method === "POST") {
             const { id, title, publicationDate, location, company, sourceSite, linkDetail, position, logoImgLink } = req.body;
             const data = {
                 title,
+                titleIdx: getCombinations(title),
                 publicationDate,
                 location,
+                locationIdx: getCombinations(location),
                 company,
+                companyIdx: getCombinations(company),
                 sourceSite,
                 linkDetail,
                 position,
-                logoImgLink
+                logoImgLink,
             };
             const doc = await read("jobs", id as string);
             if (!doc) {
