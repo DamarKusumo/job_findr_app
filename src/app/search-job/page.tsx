@@ -157,7 +157,7 @@ const SearchJobPage = ({
             className="w-[150px] md:col-span-2 md:w-full"
           >
             <DatePicker
-              placeholder="Published before"
+              placeholder="Published after"
               allowClear
               className="w-full"
               format={customFormat}
