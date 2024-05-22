@@ -10,10 +10,15 @@ import {
 import { Avatar, Card, Col, Row } from "antd";
 
 interface JobCardProps {
-  data: DataObject;
+  // data: DataObject;
+  data: any;
 }
 
 const JobCard = ({ data }: JobCardProps) => {
+  const getDate = (seconds: number) => {
+    return new Date(seconds * 1000).toLocaleDateString("zh-Hans-CN");
+  };
+
   return (
     <Card
       className="w-full"
@@ -54,7 +59,7 @@ const JobCard = ({ data }: JobCardProps) => {
             </Col>
             <Col flex="9" className="h-auto">
               <span className="break-words">
-                Published {data.publicationDate}
+                Published {getDate(data.publicationDate._seconds)}
               </span>
             </Col>
           </Row>
