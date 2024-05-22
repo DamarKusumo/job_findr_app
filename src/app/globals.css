@@ -31,3 +31,9 @@ body {
     text-wrap: balance;
   }
 }
+
+.ant-card.ant-card-bordered {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
