@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import LoadingSpinner from "@/components/layout/LoadingSpinner";
 import CustomLayout from "@/components/layout/CustomLayout";
-import { DataObject } from "./type";
 import JobCard from "@/components/card/JobCard";
 import {
   Button,
@@ -187,7 +186,7 @@ const SearchJobPage = ({
           <div className="flex flex-col gap-10 items-center w-full">
             {jobRes?.data.length ? (
               <div className="w-full grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {jobRes.data.map((job: DataObject, index: number) => (
+                {jobRes.data.map((job: any, index: number) => (
                   <JobCard key={index} data={job} />
                 ))}
               </div>
