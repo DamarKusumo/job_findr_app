@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { save, read, update, readAll, deleteData, getRef, filter } from "../../utils/firebaseSetting.js";
+import { save, read, update, deleteData, filterData } from "../../utils/firebaseSetting.js";
 import { getCombinations } from "../../utils/utils.js"
 
 // 
@@ -18,15 +18,16 @@ export default async function handler(
                 else
                     res.status(404).json({ status: 404, message: "Data not found" });
             } else {
-                const data = await filter("jobs", position, pubDate, location, company, page, size);
-                res.status(200).json({ status: 200, data: data[0], currentPage: parseInt(page as string), totalPages: data[2] , totalData: data[1] });
+                const positions = (position ? (position as string).split(",").map(pos => pos.trim()) : []) as string[];
+                const data = await filterData("jobs", positions, pubDate, location, company, page, size);
+                res.status(200).json({ status: 200, data: data[0], currentPage: data[3], totalPages: data[2] , totalData: data[1] });
             }
         } else if (req.method === "POST") {
             const { id, title, publicationDate, location, company, sourceSite, linkDetail, position, logoImgLink } = req.body;
             const data = {
                 title,
                 titleIdx: getCombinations(title),
-                publicationDate,
+                publicationDate: new Date(publicationDate),
                 location,
                 locationIdx: getCombinations(location),
                 company,

@@ -1,6 +1,5 @@
 import { initializeApp, cert, getApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import { collection } from 'firebase/firestore';
 
 const serviceAccount = {
     "type": "service_account",
@@ -63,31 +62,38 @@ export const getRef = async (collection) => {
     return db.collection(collection);
 }
 
-export const filter = async (collection, position, pubDate, location, company, page, size) => {
+export const filterData = async (collection, position, pubDate, location, company, page, size) => {
     let query = db.collection(collection);
-    const conditions = [
-        position ? ["position", "==", (position).toLowerCase()] : null,
-        pubDate ? ["publicationDate", ">=", new Date(pubDate)] : null,
-        location ? ["locationIdx", "array-contains", (location).toLowerCase()] : null,
+
+    let conditions = [
+        pubDate ? ["publicationDate", "<", new Date(pubDate)] : null,
+        location ? ["location", "==", location] : null,
         company ? ["companyIdx", "array-contains", (company).toLowerCase()] : null,
     ].filter(Boolean);
-
+    if (position) {{
+        for (let i = 0; i < position.length; i++) {
+            conditions.push(["position", "==", position[i]])
+        }
+    }}
     if (conditions.length > 0) {
-        query = query.where(...conditions);
+        for (let i = 0; i < conditions.length; i++) {
+            query = query.where(conditions[i][0], conditions[i][1], conditions[i][2]);
+        }
     }
     const totalData = (await query.count().get()).data().count;
-    const totalPage = Math.floor(totalData / size);
-    const cursor = (page-1) * size + 1;
-    console.log(cursor);
+    const totalPage = totalData < size ? 1 : Math.floor(totalData / size);
+    const currentPage = totalData < size ? 1 : page;
+  
     query = query
         .orderBy(
-            "publicationDate"
-        ).limit(
-            parseInt(size)
-        ).startAfter(cursor);
+            "publicationDate",
+        )
+        .limit(
+            parseInt(page * size) + 1
+        )
     const snapshot = await query.get();
-    const docs = snapshot.docs.map(doc => doc.data());
-    return [docs, totalData, totalPage];
+    const lastData = snapshot.docs.slice(-10).map(doc => doc.data());
+    return [lastData, totalData, totalPage, currentPage];
 }
 
 export const deleteData = async (collection, id) => {
