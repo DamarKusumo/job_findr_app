@@ -1,5 +1,5 @@
 import { initializeApp, cert, getApp } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, Filter } from 'firebase-admin/firestore';
 
 const serviceAccount = {
     "type": "service_account",
@@ -70,20 +70,28 @@ export const filterData = async (collection, position, pubDate, location, compan
         location ? ["location", "==", location] : null,
         company ? ["companyIdx", "array-contains", (company).toLowerCase()] : null,
     ].filter(Boolean);
-    if (position) {{
-        for (let i = 0; i < position.length; i++) {
-            conditions.push(["position", "==", position[i]])
-        }
-    }}
+
     if (conditions.length > 0) {
         for (let i = 0; i < conditions.length; i++) {
             query = query.where(conditions[i][0], conditions[i][1], conditions[i][2]);
         }
     }
+    if (position) {
+        let conditions = [];
+
+        for (let i = 0; i < position.length; i++) {
+            conditions.push(Filter.where("position", "==", position[i]));
+        }
+
+        query = query.where(
+            Filter.or(...conditions)
+        );
+    }
+
     const totalData = (await query.count().get()).data().count;
     const totalPage = totalData < size ? 1 : Math.floor(totalData / size);
     const currentPage = totalData < size ? 1 : page;
-  
+
     query = query
         .orderBy(
             "publicationDate",
