@@ -58,6 +58,44 @@ export const readAll = async (collection) => {
     return docs;
 }
 
+export const getRef = async (collection) => {
+    return db.collection(collection);
+}
+
+export const filterData = async (collection, position, pubDate, location, company, page, size) => {
+    let query = db.collection(collection);
+
+    let conditions = [
+        pubDate ? ["publicationDate", "<", new Date(pubDate)] : null,
+        location ? ["location", "==", location] : null,
+        company ? ["companyIdx", "array-contains", (company).toLowerCase()] : null,
+    ].filter(Boolean);
+    if (position) {{
+        for (let i = 0; i < position.length; i++) {
+            conditions.push(["position", "==", position[i]])
+        }
+    }}
+    if (conditions.length > 0) {
+        for (let i = 0; i < conditions.length; i++) {
+            query = query.where(conditions[i][0], conditions[i][1], conditions[i][2]);
+        }
+    }
+    const totalData = (await query.count().get()).data().count;
+    const totalPage = totalData < size ? 1 : Math.floor(totalData / size);
+    const currentPage = totalData < size ? 1 : page;
+  
+    query = query
+        .orderBy(
+            "publicationDate",
+        )
+        .limit(
+            parseInt(page * size) + 1
+        )
+    const snapshot = await query.get();
+    const lastData = snapshot.docs.slice(-10).map(doc => doc.data());
+    return [lastData, totalData, totalPage, currentPage];
+}
+
 export const deleteData = async (collection, id) => {
     const docRef = db.collection(collection).doc(id);
     if ((await docRef.get()).exists) {
