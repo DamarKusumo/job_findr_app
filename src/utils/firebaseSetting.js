@@ -92,7 +92,7 @@ export const filterData = async (collection, position, pubDate, location, compan
             parseInt(page * size) + 1
         )
     const snapshot = await query.get();
-    const lastData = snapshot.docs.slice(-10).map(doc => doc.data());
+    const lastData = snapshot.docs.slice(size * -1).map(doc => doc.data());
     return [lastData, totalData, totalPage, currentPage];
 }
 
