@@ -24,7 +24,6 @@ import {
 import { getJobData } from "@/services/job";
 import dayjs from "dayjs";
 
-export const PAGE_ROUTE_SEARCH_JOB = "/search-job";
 const dateFormat = "YYYY/MM/DD";
 
 const SearchJobPage = ({
@@ -91,7 +90,7 @@ const SearchJobPage = ({
       values.company,
       values.pubDate?.format(dateFormat)
     );
-    router.push(`${PAGE_ROUTE_SEARCH_JOB}?${params}`);
+    router.push(`/search-job?${params}`);
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -211,7 +210,7 @@ const SearchJobPage = ({
                     pubDate,
                     page
                   );
-                  router.push(`${PAGE_ROUTE_SEARCH_JOB}?${params}`);
+                  router.push(`/search-job?${params}`);
                 }}
               />
             ) : null}
